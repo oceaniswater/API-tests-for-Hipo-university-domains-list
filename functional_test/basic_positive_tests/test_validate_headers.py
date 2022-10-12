@@ -12,11 +12,17 @@ Verify that information is NOT leaked via headers (e.g. X-Powered-By header is n
 """
 
 basic_headers = {'Content-Type': 'application/json'}
-expected_response_headers = {'Date': '', 'Content-Type': 'application/json', 'Content-Length': '180', 'Connection': 'close'}
+# for example:
+expected_response_headers = ['Date', 'Content-Type', 'Content-Length', 'Connection']
 
 
 def test_get_search_check_expected_headers():
     result: Response = ApiHipo.get_search(headers=basic_headers, name='Marywood', country='United States')
     for header in result.headers.keys():
-        assert header in expected_response_headers.keys(), f'Unexpected header: {header}'
+        assert header in expected_response_headers, f'unexpected header: {header}'
 
+
+def test_get_search_check_imortant_headers():
+    result: Response = ApiHipo.get_search(headers=basic_headers, name='Marywood', country='United States')
+    assert 'application/json' == result.headers['Content-Type'], 'wrong header value'
+    assert 'close' == result.headers['Connection'], 'wrong header value'
